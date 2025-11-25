@@ -1,3 +1,4 @@
 /redisdata
 /pgdata
 /initdb.d
+.env
