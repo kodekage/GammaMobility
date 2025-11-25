@@ -13,7 +13,7 @@ func StartServer() {
 	environmentSetup()
 	logger.Info("Starting Gamma Mobility Server...")
 
-	// setup routes
+	// mount routes
 	router := setupRoutes()
 
 	// start HTTP server
