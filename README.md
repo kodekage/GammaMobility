@@ -6,8 +6,6 @@ This code base contains source for my Gamma Mobility Go Lang coding test.
 
 The endpoints expect 100k customer payment requests every minute. To handle requests at this scale, I integrated a message broker (using kafka) that asynchronously handles processing payment requests to the API while allowing the endpoint process request at the required scale effortlessly.
 
-Asyn
-
 ## Code Setup
 - clone repository
 - install go mod ependencies
