@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/joho/godotenv"
 	"github.com/kodekage/gamma_mobility/internal/logger"
 	"github.com/redis/go-redis/v9"
 )
@@ -31,6 +32,7 @@ func RedisClient() *redis.Client {
 }
 
 func SqlClient() *pgxpool.Pool {
+	EnvironmentSetup()
 	var ctx = context.Background()
 
 	pool, err := pgxpool.New(ctx, os.Getenv("DATABASE_URL"))
@@ -46,16 +48,10 @@ func SqlClient() *pgxpool.Pool {
 	return pool
 }
 
-// func SqlClient() *sqlx.DB {
-// 	sqlClient, err := sqlx.Open("mysql", "root:rootpw@/banking")
-// 	if err != nil {
-// 		logger.Error(err.Error())
-// 		panic(err)
-// 	}
-// 	// See "Important settings" section.
-// 	sqlClient.SetConnMaxLifetime(time.Minute * 3)
-// 	sqlClient.SetMaxOpenConns(10)
-// 	sqlClient.SetMaxIdleConns(10)
+func EnvironmentSetup() {
+	if err := godotenv.Load(); err != nil {
+		logger.Warn("No .env file found, proceeding with system environment variables")
+	}
 
-// 	return sqlClient
-// }
+	logger.Info("Environment variables loaded")
+}

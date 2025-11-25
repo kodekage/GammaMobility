@@ -8,6 +8,7 @@ import (
 	"github.com/kodekage/gamma_mobility/dto"
 	"github.com/kodekage/gamma_mobility/internal/logger"
 	"github.com/kodekage/gamma_mobility/internal/queue"
+	"github.com/kodekage/gamma_mobility/services/paymentservice"
 	"github.com/kodekage/gamma_mobility/utils"
 	"github.com/segmentio/kafka-go"
 )
@@ -52,4 +53,11 @@ func processMessage(msg interface{}) {
 	}
 
 	logger.Info("Processing payment for TransactionReference: " + payload.TransactionReference)
+
+	paymentService := paymentservice.New()
+	err := paymentService.ProcessPayment(payload)
+	if err != nil {
+		logger.Error("Could not process payment " + err.Error())
+		return
+	}
 }
