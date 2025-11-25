@@ -5,12 +5,12 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/kodekage/gamma_mobility/entities"
-	"github.com/kodekage/gamma_mobility/internal/errors"
 	"github.com/kodekage/gamma_mobility/internal/logger"
 )
 
 type Repository interface {
-	Save(a entities.Account) *errors.AppError
+	Save(a entities.Account) error
+	GetByCustomerId(id string) (*entities.Account, error)
 }
 
 type accountrepository struct {
@@ -23,7 +23,7 @@ func New(dbClient *pgxpool.Pool) Repository {
 	return accountrepository{dbClient}
 }
 
-func (r accountrepository) Save(a entities.Account) *errors.AppError {
+func (r accountrepository) Save(a entities.Account) error {
 	query := `
 		INSERT INTO accounts (customer_id, balance)
 		VALUES ($1, $2)
@@ -34,8 +34,25 @@ func (r accountrepository) Save(a entities.Account) *errors.AppError {
 	err := r.sqlClient.QueryRow(context.Background(), query, a.CustomerId, a.Balance).Scan(&id)
 	if err != nil {
 		logger.Error("Error while saving to account " + err.Error())
-		return errors.NewUnexpectedError("Error " + err.Error())
+		return err
 	}
 
 	return nil
+}
+
+func (r accountrepository) GetByCustomerId(id string) (*entities.Account, error) {
+	var account entities.Account
+
+	query := `SELECT id, customer_id, balance, created_at FROM accounts WHERE customer_id=$1`
+	err := r.sqlClient.QueryRow(context.Background(), query, id).Scan(
+		&account.Id,
+		&account.CustomerId,
+		&account.Balance,
+		&account.CreatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &account, nil
 }

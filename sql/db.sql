@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     transaction_reference TEXT UNIQUE NOT NULL,
     amount NUMERIC(18, 2) NOT NULL,
     payment_status TEXT NOT NULL,   -- e.g. 'complete', 'processing', 'failed'
+    transaction_date TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
 
     CONSTRAINT fk_transactions_customer

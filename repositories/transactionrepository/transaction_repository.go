@@ -5,12 +5,11 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/kodekage/gamma_mobility/entities"
-	"github.com/kodekage/gamma_mobility/internal/errors"
 	"github.com/kodekage/gamma_mobility/internal/logger"
 )
 
 type Repository interface {
-	Save(t entities.Transction) *errors.AppError
+	Save(t entities.Transction) error
 }
 
 type transactionrepository struct {
@@ -23,18 +22,18 @@ func New(dbClient *pgxpool.Pool) Repository {
 	return transactionrepository{dbClient}
 }
 
-func (r transactionrepository) Save(e entities.Transction) *errors.AppError {
+func (r transactionrepository) Save(e entities.Transction) error {
 	query := `
-		INSERT INTO transactions (customer_id, transaction_reference, amount, payment_status)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO transactions (customer_id, transaction_reference, amount, payment_status, transaction_date)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id
 	`
 
 	var id string
-	err := r.sqlClient.QueryRow(context.Background(), query, e.CustomerId, e.TransactionReference, e.Amount, e.PaymentStatus).Scan(&id)
+	err := r.sqlClient.QueryRow(context.Background(), query, e.CustomerId, e.TransactionReference, e.Amount, e.PaymentStatus, e.TransactionDate).Scan(&id)
 	if err != nil {
 		logger.Error("Error while saving new transaction " + err.Error())
-		return errors.NewUnexpectedError("Error " + err.Error())
+		return err
 	}
 
 	return nil
