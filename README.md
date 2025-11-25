@@ -38,4 +38,7 @@ To start the worker process
 ## SQL
 I have included a `db.sql` file that contains the sql script required to create tables for the database. Please run the script in your DBMS of choice after setting up project infrastructure and before calling the API endpoints.
 
-## 
+## Further Improvement
+Due to time constrients I was not able to
+- Add bespoke validation library for validating input request body input field asides checking if its a valid JSON
+- Add Swagger documentation
