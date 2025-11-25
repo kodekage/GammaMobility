@@ -24,8 +24,6 @@ func New(dbClient *pgxpool.Pool) Repository {
 }
 
 func (r accountrepository) Save(a entities.Account) *errors.AppError {
-	defer r.sqlClient.Close()
-
 	query := `
 		INSERT INTO accounts (customer_id, balance)
 		VALUES ($1, $2)

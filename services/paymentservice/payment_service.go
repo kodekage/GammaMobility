@@ -2,6 +2,7 @@ package paymentservice
 
 import (
 	"github.com/kodekage/gamma_mobility/dto"
+	"github.com/kodekage/gamma_mobility/internal/logger"
 	"github.com/kodekage/gamma_mobility/repositories/accountrepository"
 	"github.com/kodekage/gamma_mobility/repositories/customerrepository"
 	"github.com/kodekage/gamma_mobility/repositories/transactionrepository"
@@ -32,5 +33,11 @@ func New() Service {
 }
 
 func (p paymentService) ProcessPayment(data dto.CreateCustomerPaymentRequest) error {
+	_, err := p.customerRepository.GetCustomerByID(data.CustomerId)
+	if err != nil {
+		logger.Error("Customer Not Found " + err.Error())
+		return err
+	}
+
 	return nil
 }

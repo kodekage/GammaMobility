@@ -22,8 +22,6 @@ func New(dbClient *pgxpool.Pool) Repository {
 }
 
 func (r customerRepository) GetCustomerByID(id string) (*entities.Customer, error) {
-	defer r.sqlClient.Close()
-
 	var customer entities.Customer
 	query := `SELECT id, name, created_at FROM customers WHERE id=$1`
 	err := r.sqlClient.QueryRow(context.Background(), query, id).Scan(
